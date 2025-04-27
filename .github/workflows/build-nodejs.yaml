@@ -1,1 +1,45 @@
+name: Build Node.js App
 
+on:
+  workflow_call:
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+
+    outputs:
+      cache-hit: ${{ steps.npm-cache.outputs.cache-hit }}
+
+    steps:
+      - name: Checkout caller repo
+        uses: actions/checkout@v4
+        with:
+          path: caller-repo
+
+      - name: Checkout shared-pipeline repo (the reusable workflows/tools repo)
+        uses: actions/checkout@v4
+        with:
+          repository: your-org/shared-pipelines
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: shared-pipeline
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: caller-repo/package-lock.json
+
+      - name: Cache npm modules manually (if you want tighter control)
+        id: npm-cache
+        uses: actions/cache@v4
+        with:
+          path: caller-repo/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('caller-repo/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install npm dependencies
+        run: |
+          cd caller-repo
+          npm ci
