@@ -1,12 +1,6 @@
 name: Build Node.js App
 on:
   workflow_call:
-    inputs:
-      library-path:
-        description: "Base path to shared actions"
-        required: false
-        type: string
-        default: ./shared-pipeline/.github/actions
 
 jobs:
   prepare:
@@ -35,7 +29,10 @@ jobs:
       - name: Install npm modules
         working-directory: shared-pipeline
         run: npm ci
-      
+
+      - name: Install tools
+        uses: ./shared-pipeline/.github/actions/setup-tools
+        
       - name: Cache Workspace
         uses: actions/cache/save@v4
         with:
