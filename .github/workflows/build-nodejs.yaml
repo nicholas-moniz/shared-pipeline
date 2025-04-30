@@ -58,5 +58,5 @@ jobs:
             ~/.bashrc
             ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
-      - name:
+      - name: Test
         run: echo "$PATH"
