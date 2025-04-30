@@ -26,7 +26,7 @@ jobs:
       - name: Checkout shared-pipeline
         uses: actions/checkout@v4
         with:
-          repository: nichoals-moniz/shared-pipeline    
+          repository: nicholas-moniz/shared-pipeline    
           token: ${{ secrets.GITHUB_TOKEN }}
           path: shared-pipeline
           fetch-depth: 1
