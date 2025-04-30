@@ -1,0 +1,36 @@
+name: Setup Tools
+description: Install helm, kubectl, jq, yq, and Oracle CLI locally
+runs:
+  using: "composite"
+  steps:
+    - name: Create tools directory
+      run: |
+        mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
+        echo 'export PATH=$PATH:${{ github.workspace }}/tools/bin' >> ~/.bashrc
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        mv kubectl "${GITHUB_WORKSPACE}/tools/bin/kubectl"
+
+    - name: Install helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        mv /usr/local/bin/helm "${GITHUB_WORKSPACE}/tools/bin/helm"
+
+    - name: Install jq and yq
+      run: |
+        apt-get update && apt-get install -y jq yq
+        cp $(which jq) "${GITHUB_WORKSPACE}/tools/bin/jq"
+        cp $(which yq) "${GITHUB_WORKSPACE}/tools/bin/yq"
+
+    - name: Install Oracle Cloud CLI (oci)
+      run: |
+        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh -o install.sh
+        bash install.sh \
+          --accept-all-defaults \
+          --install-dir "${GITHUB_WORKSPACE}/tools" \
+          --exec-dir "${GITHUB_WORKSPACE}/tools/bin" \
+          --no-tty
+        rm -rf install.sh
