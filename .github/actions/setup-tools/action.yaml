@@ -36,7 +36,7 @@ runs:
     - name: Install Oracle Cloud CLI (oci)
       shell: bash 
       run: |
-        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh -o install.sh
+        curl -LO https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
         bash install.sh \
           --accept-all-defaults \
           --install-dir "${GITHUB_WORKSPACE}/tools" \
