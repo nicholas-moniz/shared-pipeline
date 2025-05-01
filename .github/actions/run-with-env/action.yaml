@@ -1,6 +1,5 @@
 name: Run with shared environment variables
 description: Sources runtime.env then runs a command with that environment
-
 inputs:
   cmd:
     description: "Command to run with sourced env"
@@ -10,4 +9,5 @@ runs:
   using: "composite"
   steps:
     - name: Run command with shared env
+      shell: bash
       run: ${{ github.action_path }}/entrypoint.sh "${{ inputs.cmd }}"
