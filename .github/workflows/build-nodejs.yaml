@@ -45,9 +45,7 @@ jobs:
       - name: Restore cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.bashrc
-            ${{ github.workspace }}
+          path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
       - name: Test
         run: echo "$PATH"
