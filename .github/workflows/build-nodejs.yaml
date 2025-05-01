@@ -48,5 +48,3 @@ jobs:
         with:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
-      - name: Test
-        run: ./shared-pipeline/scripts/inject-env.sh 'echo "${PATH}"' 
