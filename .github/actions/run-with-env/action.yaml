@@ -8,6 +8,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Make entrypoint executable
+      shell: bash
+      run: chmod +x ${{ github.action_path }}/entrypoint.sh
+
     - name: Run command with shared env
       shell: bash
       run: ${{ github.action_path }}/entrypoint.sh "${{ inputs.cmd }}"
