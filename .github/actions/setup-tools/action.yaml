@@ -25,9 +25,14 @@ runs:
     - name: Install jq and yq
       shell: bash 
       run: |
-        apt-get update && apt-get install -y jq yq
-        cp $(which jq) "${GITHUB_WORKSPACE}/tools/bin/jq"
-        cp $(which yq) "${GITHUB_WORKSPACE}/tools/bin/yq"
+        curl -LO https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+        curl -LO https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64
+        
+        chmod +x jq
+        chmod +x yq
+        
+        mv jq "${GITHUB_WORKSPACE}/tools/bin/jq"
+        mv yq "${GITHUB_WORKSPACE}/tools/bin/yq"
 
     - name: Install Oracle Cloud CLI (oci)
       shell: bash 
