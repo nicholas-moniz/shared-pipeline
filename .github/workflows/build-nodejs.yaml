@@ -45,6 +45,5 @@ jobs:
         with:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
-      - run: ls
       - name: Test
-        run: ./shared-pipeline/utils/entrypoint.sh 'echo "${PATH}' 
+        run: ./shared-pipeline/scripts/inject-env.sh 'echo "${PATH}' 
