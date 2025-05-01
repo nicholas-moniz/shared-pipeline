@@ -45,7 +45,8 @@ jobs:
         with:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
+      - run: ls
       - name: Test
-        uses: ./shared-pipeline/.github/action/run-with-env
+        uses: ./shared-pipeline/.github/actions/run-with-env
         with:
           cmd: echo "$PATH"
