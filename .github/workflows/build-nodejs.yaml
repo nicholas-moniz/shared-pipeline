@@ -35,6 +35,7 @@ jobs:
         with:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
+          
   next-job:
     runs-on: ubuntu-latest
     needs: prepare
@@ -45,4 +46,6 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
       - name: Test
-        run: echo "$PATH"
+        uses: ./shared-pipeline/.github/action/run-with-env
+        with:
+          cmd: echo "$PATH"
