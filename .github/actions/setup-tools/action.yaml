@@ -34,12 +34,13 @@ runs:
         mv yq "${GITHUB_WORKSPACE}/tools/bin/yq"
 
     - name: Install Oracle Cloud CLI (oci)
-      shell: bash 
+      shell: bash
       run: |
         curl -LO https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
         bash install.sh \
           --accept-all-defaults \
-          --install-dir "${GITHUB_WORKSPACE}/tools/oci-cli"
-          --exec-dir "${GITHUB_WORKSPACE}/tools/bin"
+          --install-dir "${GITHUB_WORKSPACE}/tools/oci-cli" \
+          --exec-dir "${GITHUB_WORKSPACE}/tools/bin" \
           --no-tty
-        rm -rf install.sh
+        rm -f install.sh
+
