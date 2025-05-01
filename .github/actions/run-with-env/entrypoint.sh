@@ -2,8 +2,10 @@
 set -euo pipefail
 
 if [[ -f "${GITHUB_WORKSPACE}/runtime.env" ]]; then
-  source "${GITHUB_WORKSPACE}/runtime.env"
-  echo "${PATH}"
+  while IFS='=' read -r key value; do
+    [[ -z "$key" || "$key" == \#* ]] && continue
+    export "$key=$value"
+  done < "${GITHUB_WORKSPACE}/runtime.env"
 fi
 
 exec bash -c "$*"
