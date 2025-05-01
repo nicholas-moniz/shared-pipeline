@@ -6,7 +6,6 @@ runs:
     - name: Create tools directory
       run: |
         mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
-        echo 'export PATH=$PATH:${{ github.workspace }}/tools/bin' >> ~/.bashrc
 
     - name: Install kubectl
       run: |
