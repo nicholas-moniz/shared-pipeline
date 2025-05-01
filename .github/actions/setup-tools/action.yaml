@@ -33,7 +33,7 @@ runs:
       shell: bash 
       run: |
         curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh -o install.sh
-        install.sh \
+        bash install.sh \
           --accept-all-defaults \
           --install-dir "${GITHUB_WORKSPACE}/tools" \
           --exec-dir "${GITHUB_WORKSPACE}/tools/bin" \
