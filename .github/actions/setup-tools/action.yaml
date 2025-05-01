@@ -7,7 +7,7 @@ runs:
       shell: bash 
       run: |
         mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
-        echo "export PATH=${PATH}:${GITHUB_WORKSPACE}/tools/bin" > "${GITHUB_WORKSPACE}/runtime.env"
+        echo "PATH=${PATH}:${GITHUB_WORKSPACE}/tools/bin" > "${GITHUB_WORKSPACE}/runtime.env"
 
     - name: Install kubectl
       shell: bash 
