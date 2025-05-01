@@ -13,6 +13,7 @@ runs:
       shell: bash 
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        ls
         chmod +x kubectl
         mv kubectl "${GITHUB_WORKSPACE}/tools/bin/kubectl"
 
@@ -27,6 +28,8 @@ runs:
       run: |
         curl -LO https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
         curl -LO https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64
+
+        ls
         
         chmod +x jq
         chmod +x yq
