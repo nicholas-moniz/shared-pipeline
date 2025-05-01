@@ -4,28 +4,33 @@ runs:
   using: "composite"
   steps:
     - name: Create tools directory
+      shell: bash 
       run: |
         mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
         echo "export PATH=${PATH}:${GITHUB_WORKSPACE}/tools/bin" > "${GITHUB_WORKSPACE}/runtime.env"
 
     - name: Install kubectl
+      shell: bash 
       run: |
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x kubectl
         mv kubectl "${GITHUB_WORKSPACE}/tools/bin/kubectl"
 
     - name: Install helm
+      shell: bash 
       run: |
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
         mv /usr/local/bin/helm "${GITHUB_WORKSPACE}/tools/bin/helm"
 
     - name: Install jq and yq
+      shell: bash 
       run: |
         apt-get update && apt-get install -y jq yq
         cp $(which jq) "${GITHUB_WORKSPACE}/tools/bin/jq"
         cp $(which yq) "${GITHUB_WORKSPACE}/tools/bin/yq"
 
     - name: Install Oracle Cloud CLI (oci)
+      shell: bash 
       run: |
         curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh -o install.sh
         install.sh \
