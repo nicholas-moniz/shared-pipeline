@@ -38,9 +38,6 @@ jobs:
   next-job:
     runs-on: ubuntu-latest
     needs: prepare
-    defaults:
-      run:
-        shell: bash --rcfile ~/.bashrc -e -o pipefail -c
     steps:
       - name: Restore cache
         uses: actions/cache@v4
