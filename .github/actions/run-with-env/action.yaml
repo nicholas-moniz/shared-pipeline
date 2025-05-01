@@ -1,5 +1,5 @@
 name: Run with shared environment variables
-description: Downloads and sources runtime.env then runs a command with that environment
+description: Sources runtime.env then runs a command with that environment
 
 inputs:
   cmd:
@@ -9,9 +9,5 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Make wrapper executable
-      run: chmod +x ${{ github.action_path }}/entrypoint.sh
-
     - name: Run command with shared env
       run: ${{ github.action_path }}/entrypoint.sh "${{ inputs.cmd }}"
-      shell: bash
