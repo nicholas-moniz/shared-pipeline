@@ -47,6 +47,4 @@ jobs:
           key: ${{ runner.os }}-workspace-${{ github.run_id }}
       - run: ls
       - name: Test
-        uses: ./shared-pipeline/.github/actions/run-with-env
-        with:
-          cmd: echo "$PATH"
+        run: ./shared-pipeline/utils/entrypoint.sh 'echo "${PATH}' 
