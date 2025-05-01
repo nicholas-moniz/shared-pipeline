@@ -5,9 +5,6 @@ on:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash --rcfile ~/.bashrc -e -o pipefail -c
     steps:
       - name: Checkout caller
         uses: actions/checkout@v4
