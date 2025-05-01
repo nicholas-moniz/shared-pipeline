@@ -42,5 +42,5 @@ runs:
           --install-dir "${GITHUB_WORKSPACE}/tools/oci-cli" \
           --exec-dir "${GITHUB_WORKSPACE}/tools/bin" \
           --no-tty
-        rm -rf install.sh
+        rm -f install.sh
 
