@@ -7,7 +7,9 @@ try {
   const envFile = path.join(workspace, "runtime.env");
 
   const entries = [
-    { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` }
+    { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` }, 
+    { key: "CALLER_PATH": `${workspace}/${process.env.GITHUB_REPOSITORY.split("/")[-1]}` },
+    { key: "SCRIPTS_PATH": `${workspace}/scripts` }
   ];
 
   fs.writeFileSync(envFile, "");
