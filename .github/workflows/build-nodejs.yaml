@@ -12,7 +12,6 @@ jobs:
           repository: ${{ github.repository }} 
           token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           path: ${{ github.event.repository.name }}
-          fetch-depth: 1
 
       - name: Checkout shared-pipeline
         uses: actions/checkout@v4
@@ -20,7 +19,6 @@ jobs:
           repository: nicholas-moniz/shared-pipeline    
           token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           path: shared-pipeline
-          fetch-depth: 1
           ref: ${{ github.ref }}
 
       - name: Make all utility scripts executable
@@ -30,6 +28,9 @@ jobs:
         working-directory: shared-pipeline
         run: npm ci
 
+      - name: Set runtime environment variables
+        uses: ./shared-pipeline/.github/actions/set-env-vars
+
       - name: Install tools
         uses: ./shared-pipeline/.github/actions/setup-tools
         
@@ -37,14 +38,14 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}
-          key: ${{ runner.os }}-workspace-${{ github.run_id }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
           
   next-job:
     runs-on: ubuntu-latest
     needs: prepare
     steps:
       - name: Restore cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}
-          key: ${{ runner.os }}-workspace-${{ github.run_id }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
