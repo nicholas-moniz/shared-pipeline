@@ -1,0 +1,5 @@
+name: Set Environment Variables
+description: Writes dynamic environment variables to runtime.env
+runs:
+  using: node20
+  main: index.js
