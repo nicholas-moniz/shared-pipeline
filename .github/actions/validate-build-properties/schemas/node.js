@@ -1,4 +1,4 @@
-const schema = z.object({ 
+const node = z.object({ 
   project: z.object({
     name: z.string(),
     version: z.string().regex(/^\d+\.\d+\.\d+$/, {
@@ -43,4 +43,4 @@ const schema = z.object({
     .default({}),
 });
 
-module.exports = { schema };
+module.exports = { node };
