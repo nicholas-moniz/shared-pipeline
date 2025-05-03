@@ -1,5 +1,9 @@
 name: Set Environment Variables
 description: Writes dynamic environment variables to runtime.env
+inputs:
+  build-properties-path:
+    description: "Relative path to build-properties.json"
+    required: true
 runs:
   using: node20
   main: index.js
