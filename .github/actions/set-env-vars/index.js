@@ -14,6 +14,10 @@ try {
     { key: "BUILD_PATH": `${workspace}/build.json` }
   ];
 
+  if(process.env.GITHUB_REF.includes("nodejs") {
+    entries.push({ key: "BUILD_TYPE": "NODE" });
+  }
+  
   fs.writeFileSync(envFile, "");
   entries.forEach(({ key, value }) => {
     fs.appendFileSync(envFile, `${key}=${value}\n`);
