@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       build-properties-path:
-        description: "Relative path to the build properties file (e.g., ./build/build-properties.json)"
+        description: "Relative path to the build-properties.json file"
         required: true
         type: string
 
@@ -35,6 +35,8 @@ jobs:
 
       - name: Set runtime environment variables
         uses: ./shared-pipeline/.github/actions/set-env-vars
+        with:
+          build-properties-path: ${{ inputs.build-properties-path }}
 
       - name: Install tools
         uses: ./shared-pipeline/.github/actions/setup-tools
