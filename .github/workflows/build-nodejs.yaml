@@ -1,6 +1,11 @@
 name: Build Node.js App
 on:
   workflow_call:
+    inputs:
+      build-properties-path:
+        description: "Relative path to the build properties file (e.g., ./build/build-properties.json)"
+        required: true
+        type: string
 
 jobs:
   prepare:
