@@ -9,6 +9,7 @@ try {
   const entries = [
     { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` }, 
     { key: "CALLER_PATH": `${workspace}/${process.env.GITHUB_REPOSITORY.split("/")[-1]}` },
+    { key: "LIBRARY_PATH": `${workspace}/shared-pipeline` },
     { key: "SCRIPTS_PATH": `${workspace}/scripts` },
     { key: "BUILD_PROPERTIES_PATH": `${workspace}/${core.getInput("build-properties-path")}` },
     { key: "BUILD_PATH": `${workspace}/build.json` }
