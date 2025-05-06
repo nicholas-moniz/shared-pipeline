@@ -6,6 +6,7 @@ runs:
     - name: Create tools directory
       shell: bash 
       run: |
+        echo "${GITHUB_REF}"
         mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
         echo "PATH=${PATH}:${GITHUB_WORKSPACE}/tools/bin" > "${GITHUB_WORKSPACE}/runtime.env"
 
