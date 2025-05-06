@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const core = require("@actions/core");
 const { node } = require("./schemas/index");
+const { ZodError } = require("zod");
 
 module.exports = function (build) {
   try {
@@ -11,27 +12,20 @@ module.exports = function (build) {
         schema = node;
         break;
       default:
-        
+        throw new Error(`Invalid build type ${process.env.BUILD_TYPE}`);
     }
-    // Validate and apply defaults
-    const parsed = schema.parse(build);
-    core.info("✅ build-properties.json is valid.");
-
-    // Overwrite the original file with normalized version (optional)
-    const filePath = process.env.BUILD_PATH || path.resolve(process.cwd(), "build-properties.json");
-    fs.writeFileSync(filePath, JSON.stringify(parsed, null, 2));
-    core.info("✅ build-properties.json updated with defaults.");
+    
+    const parsed = schema.parse(JSON.parse(process.env.BUILD_PROPERTIES_PATH));
+    fs.writeFileSync(process.env.BUILD_PATH, JSON.stringify(parsed, null, 2));
+    core.info(`${process.env.BUILD_PROPERTIES_PATH} has been validated and parsed at ${process.env.BUILD_PATH}`);
   } catch (err) {
-    // Handle Zod validation errors
-    if (err.errors) {
-      core.error("❌ Validation failed:");
+    if (err instanceof ZodError) {
+      core.error(`Failed to validate ${process.env.BUILD_PROPERTIES_PATH} for the following reasons`);
       err.errors.forEach(e => core.error(JSON.stringify(e, null, 2)));
     } else {
-      core.error("❌ Unexpected error:");
-      core.error(err.message);
+      core.error(`An unexpected error occured while trying to validate ${process.env.BUILD_PROPERTIES_PATH} for the following reason: ${err.message}`);
     }
 
-    // Let the caller (bootstrap) handle the actual exit/failure
-    throw err;
+    core.setFailed(`An error occured while trying to validate ${process.env.BUILD_PROPERTIES_PATH}. See step logs for more info`)
   }
 };
