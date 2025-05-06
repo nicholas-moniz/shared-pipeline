@@ -15,7 +15,7 @@ try {
     { key: "BUILD_PATH", value: `${workspace}/build.json` }
   ];
 
-  if(process.env.GITHUB_REF.includes("nodejs") {
+  if(process.env.GITHUB_REF.includes("nodejs")) {
     entries.push({ key: "BUILD_TYPE": "NODE" });
   }
   
