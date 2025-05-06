@@ -16,7 +16,7 @@ try {
   ];
 
   if(process.env.GITHUB_REF.includes("nodejs")) {
-    entries.push({ key: "BUILD_TYPE": "NODE" });
+    entries.push({ key: "BUILD_TYPE", value: "NODE" });
   }
   
   fs.writeFileSync(envFile, "");
