@@ -27,7 +27,8 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: Make all utility scripts executable
-        run: chmod +x shared-pipeline/scripts/*.sh
+        working-directory: shared-pipeline/scripts
+        run: chmod +x *.sh
         
       - name: Install npm modules
         working-directory: shared-pipeline
