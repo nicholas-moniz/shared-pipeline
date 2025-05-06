@@ -26,6 +26,6 @@ module.exports = function (build) {
       core.error(`An unexpected error occured while trying to validate ${process.env.BUILD_PROPERTIES_PATH} for the following reason: ${err.message}`);
     }
 
-    core.setFailed(`An error occured while trying to validate ${process.env.BUILD_PROPERTIES_PATH}. See step logs for more info`)
+    throw new Error("An error occured while trying to validate build properties");
   }
 };
