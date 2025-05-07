@@ -5,10 +5,7 @@ runs:
   steps:
     - name: Create tools directory
       shell: bash 
-      run: |
-        echo "${GITHUB_WORKFLOW_REF}"
-        mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
-        echo "PATH=${PATH}:${GITHUB_WORKSPACE}/tools/bin" > "${GITHUB_WORKSPACE}/runtime.env"
+      run: mkdir -p "${GITHUB_WORKSPACE}/tools/bin"
 
     - name: Install kubectl
       shell: bash 
