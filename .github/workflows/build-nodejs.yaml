@@ -9,6 +9,7 @@ on:
 
 jobs:
   prepare:
+    name: ${{ inputs.build-properties-path }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout caller
@@ -49,8 +50,6 @@ jobs:
 
       - name: Set runtime environment variables
         uses: ./shared-pipeline/.github/actions/set-env-vars
-        with:
-          build-properties-path: ${{ inputs.build-properties-path }}
 
       - name: Install tools
         uses: ./shared-pipeline/.github/actions/setup-tools
