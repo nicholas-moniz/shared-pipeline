@@ -16,10 +16,6 @@ try {
     { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${core.getInput("build-properties-path")}` },
     { key: "BUILD_PATH", value: `${workspace}/build.json` }
   ];
-
-  if(process.env.GITHUB_REF.includes("nodejs")) {
-    entries.push({ key: "BUILD_TYPE", value: "NODE" });
-  }
   
   fs.writeFileSync(envFile, "");
   entries.forEach(({ key, value }) => {
