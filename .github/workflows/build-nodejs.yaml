@@ -48,11 +48,11 @@ jobs:
         working-directory: shared-pipeline
         run: npm ci
 
-      - name: Set runtime environment variables
-        uses: ./shared-pipeline/.github/actions/set-env-vars
-
       - name: Install tools
         uses: ./shared-pipeline/.github/actions/setup-tools
+
+      - name: Set runtime environment variables
+        uses: ./shared-pipeline/.github/actions/set-env-vars
         
       - name: Cache Workspace
         uses: actions/cache/save@v4
