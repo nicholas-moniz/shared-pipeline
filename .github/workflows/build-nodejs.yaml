@@ -29,7 +29,7 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId,
             });
-            console.log(run.data.referenced_workflows[0]);
+            console.log(run.data.referenced_workflows[0].path.split("@"));
             console.log(run.data.referenced_workflows[0].path.split("@")[-1]);
             core.setOutput("library_ref", run.data.referenced_workflows[0].path.split("@")[-1]);
 
