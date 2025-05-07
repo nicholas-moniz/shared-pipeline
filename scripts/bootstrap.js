@@ -4,36 +4,36 @@ const core = require("@actions/core");
 const dotenv = require("dotenv");
 
 try {
-  const currentJob = process.env.GITHUB_JOB;
-  const isPrepareJob = currentJob === "prepare";
+  const isPrepareJob = process.env.GITHUB_JOB === "prepare";
 
-  const runtimeEnvPath = path.join(process.env.GITHUB_WORKSPACE || ".", "runtime.env");
+  const runtimeEnvPath = path.join(process.env.GITHUB_WORKSPACE, "runtime.env");
   if (fs.existsSync(runtimeEnvPath)) {
     dotenv.config({ path: runtimeEnvPath });
-    core.info("Loaded runtime.env");
+    core.info(`Loaded environment variables from ${runtimeEnvPath}`);
   } else if (isPrepareJob) {
-    core.info("runtime.env not found in prepare job (allowed)");
+    core.info(`${runtimeEnvPath} not found in prepare job (allowed)`);
   } else {
-    throw new Error(`runtime.env not found at ${runtimeEnvPath} in job '${currentJob}'`);
+    throw new Error(`${runtimeEnvPath} was not found`);
   }
 
+  let build;
   const buildPath = process.env.BUILD_PATH;
-  if (buildPath && fs.existsSync(buildPath)) {
-    global.build = JSON.parse(fs.readFileSync(buildPath, "utf8"));
-    core.info("Loaded build properties");
+  const buildPropertiesPath = process.env.BUILD_PROPERTIES_PATH;
+  if (fs.existsSync(buildPath)) {
+    build = JSON.parse(fs.readFileSync(buildPropertiesPath, "utf8"));
+    core.info(`Loaded ${buildPropertiesPath} and applied defaults into ${buildPath}`);
   } else if (isPrepareJob) {
-    core.info("build.json not found in prepare job (allowed)");
+    core.info(`${buildPath} not found in prepare job (allowed)`);
   } else {
-    throw new Error(`BUILD_PATH not found or missing in job '${currentJob}': ${buildPath}`);
+    throw new Error(`${buildPath} was not found`);
   }
 
   const entrypoint = path.join(process.env.GITHUB_ACTION_PATH, "index.js");
   if (!fs.existsSync(entrypoint)) {
-    throw new Error(`index.js not found at ${entrypoint}`);
+    throw new Error(`${entrypoint} was not found`);
   }
 
   global._entrypointPath = entrypoint;
-
 } catch (err) {
   core.setFailed(`${err.message}`);
   process.exit(1);
