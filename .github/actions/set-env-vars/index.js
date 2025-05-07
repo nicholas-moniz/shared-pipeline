@@ -1,5 +1,4 @@
 const core = require("@actions/core");
-const github = require("@actions/github");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,18 +7,27 @@ try {
   const envFile = path.join(workspace, "runtime.env");
 
   const entries = [
-    { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` }, 
-    { key: "CALLER_PATH", value: `${workspace}/${process.env.GITHUB_REPOSITORY.split("/")[-1]}` },
+    { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` },
+    { key: "CALLER_PATH", value: `${workspace}/${process.env.GITHUB_REPOSITORY.split("/").pop()}` },
     { key: "LIBRARY_PATH", value: `${workspace}/shared-pipeline` },
     { key: "SCRIPTS_PATH", value: `${workspace}/scripts` },
-    { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${core.getInput("build-properties-path")}` },
-    { key: "BUILD_PATH", value: `${workspace}/build.json` }
+    { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${process.env.BUILD_PROPERTIES_PATH}` },
+    { key: "BUILD_PATH", value: `${workspace}/build.json` },
+    { key: "LIBRARY_VERSION", value: process.env.LIBRARY_VERSION },
+    { key: "WORKFLOW", value: process.env.WORKFLOW },
   ];
-  
+
+  const secrets = JSON.parse(process.env.SECRETS || "{}");
+  for (const [key, value] of Object.entries(secrets)) {
+    entries.push({ key, value });
+  }
+
   fs.writeFileSync(envFile, "");
   entries.forEach(({ key, value }) => {
     fs.appendFileSync(envFile, `${key}=${value}\n`);
   });
+
+  core.info(`Succesfully wrote all environment variables to runtime.env`);
 } catch (err) {
-  core.setFailed(err.message);
+  core.setFailed(`Failed to write runtime.env: ${err.message}`);
 }
