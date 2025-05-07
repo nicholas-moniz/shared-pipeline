@@ -37,9 +37,10 @@ jobs:
             console.log(workflows);
       
             const match = workflows.find(wf =>
-              wf.path === "nicholas-moniz/shared-pipeline/.github/workflows/build-nodejs.yaml"
+              wf.path == "nicholas-moniz/shared-pipeline/.github/workflows/build-nodejs.yaml"
             );
-      
+
+            console.log(match);
             if (!match) {
               core.setFailed("Could not find matching reusable workflow reference.");
               return;
