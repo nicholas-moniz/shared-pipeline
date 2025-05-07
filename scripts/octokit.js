@@ -1,10 +1,9 @@
-const { Octokit } = require("@octokit/core");
+const { Octokit } = require("@octokit/rest");
 const core = require("@actions/core");
 
 async function main() {
   try {
-    const token = core.getInput("token", { required: true });
-    const octokit = new Octokit({ auth: token });
+    const octokit = new Octokit({ auth: process.env.NICHOLAS_MONIZ_GITHUB_TOKEN });
 
     const owner = process.env.GITHUB_REPOSITORY.split('/')[0];
     const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
