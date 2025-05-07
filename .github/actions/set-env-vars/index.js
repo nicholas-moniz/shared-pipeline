@@ -1,4 +1,6 @@
 const core = require("@actions/core");
+const github = require("@actions/github");
+const ocktokit = require(`${process.env.GITHUB_WORKSPACE}/shared-pipeline/scripts/octokit`);
 const fs = require("fs");
 const path = require("path");
 
