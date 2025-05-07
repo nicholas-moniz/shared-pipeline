@@ -18,13 +18,44 @@ jobs:
           token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           path: ${{ github.event.repository.name }}
 
+      - name: Get reusable workflow ref from caller run
+        id: get-shared-ref
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
+          script: |
+            const runId = context.runId;
+            const repo = context.repo;
+      
+            // Fetch the run info
+            const run = await github.rest.actions.getWorkflowRun({
+              owner: repo.owner,
+              repo: repo.repo,
+              run_id: runId,
+            });
+      
+            const workflows = run.data.referenced_workflows || [];
+      
+            const match = workflows.find(wf =>
+              wf.path === "nicholas-moniz/shared-pipeline/.github/workflows/build-nodejs.yaml"
+            );
+      
+            if (!match) {
+              core.setFailed("Could not find matching reusable workflow reference.");
+              return;
+            }
+      
+            const ref = match.ref;
+            core.info(`Found reusable workflow ref: ${ref}`);
+            core.setOutput("ref", ref.replace("refs/heads/", ""));
+
       - name: Checkout shared-pipeline
         uses: actions/checkout@v4
         with:
           repository: nicholas-moniz/shared-pipeline    
           token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           path: shared-pipeline
-          ref: ${{ github.ref }}
+          ref: ${{ steps.get-shared-ref.outputs.ref }}
 
       - name: Make all utility scripts executable
         working-directory: shared-pipeline/scripts
