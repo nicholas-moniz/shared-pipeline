@@ -2,4 +2,4 @@ name: Set Environment Variables
 description: Writes dynamic environment variables to runtime.env
 runs:
   using: node20
-  main: ../../scripts/bootstrap.js
+  main: index.js
