@@ -9,6 +9,7 @@ on:
 
 jobs:
   prepare:
+    name: ${{ inputs.build-properties-path }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout caller
@@ -24,12 +25,36 @@ jobs:
         with:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
-            const run = await github.rest.actions.getWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-            });
-            core.setOutput("library_ref", run.data.referenced_workflows[0].path.split("@")[1]);
+            try {
+              const run = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.runId,
+              });
+      
+              const referencedWorkflows = run.data.referenced_workflows;
+      
+              if (!referencedWorkflows || referencedWorkflows.length === 0) {
+                throw new Error("No referenced workflows found in this run");
+              }
+      
+              const path = referencedWorkflows[0].path;
+      
+              const match = path.match(/\/([^\/]+)@/);
+              if (!match) {
+                throw new Error(`Could not extract workflow filename from path: ${path}`);
+              }
+      
+              const workflowFile = match[1];
+              const workflowRef = path.split("@")[1];
+      
+              core.setOutput("workflow", workflowFile);
+              core.setOutput("library_ref", workflowRef);
+      
+              core.info(`Extracted reusable workflow: ${workflowFile}@${workflowRef}`);
+            } catch (error) {
+              core.setFailed(`Failed to get reusable workflow ref: ${error.message}`);
+            }
 
       - name: Checkout shared-pipeline
         uses: actions/checkout@v4
@@ -47,11 +72,19 @@ jobs:
         working-directory: shared-pipeline
         run: npm ci
 
-      - name: Install tools
+      - name: Setup tools
         uses: ./shared-pipeline/.github/actions/setup-tools
 
-      - name: Set runtime environment variables
+      - name: Set environment variables
         uses: ./shared-pipeline/.github/actions/set-env-vars
+        env:
+          BUILD_PROPERTIES_PATH: ${{ inputs.build-properties-path }}
+          LIBRARY_VERSION: ${{ steps.get-shared-ref.outputs.library_ref }}
+          WORKFLOW: ${{ steps.get-shared-ref.outputs.workflow }}
+          SECRETS: ${{ toJson(secrets) }}
+
+      - name: Validate build properties
+        uses: ./shared-pipeline/.github/actions/validate-build-properties
         
       - name: Cache Workspace
         uses: actions/cache/save@v4
