@@ -24,31 +24,13 @@ jobs:
         with:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
-            const runId = context.runId;
-            const repo = context.repo;
-      
             const run = await github.rest.actions.getWorkflowRun({
-              owner: repo.owner,
-              repo: repo.repo,
-              run_id: runId,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
             });
-      
-            const workflows = run.data.referenced_workflows || [];
-            console.log(workflows);
-      
-            const match = workflows.find(wf =>
-              wf.path == "nicholas-moniz/shared-pipeline/.github/workflows/build-nodejs.yaml"
-            );
-
-            console.log(match);
-            if (!match) {
-              core.setFailed("Could not find matching reusable workflow reference.");
-              return;
-            }
-      
-            const ref = match.ref;
-            core.info(`Found reusable workflow ref: ${ref}`);
-            core.setOutput("ref", ref.replace("refs/heads/", ""));
+            console.log(run.data.referenced_workflows[0].path.split("@")[-1]);
+            core.setOutput("library_ref", run.data.referenced_workflows[0].path.split("@")[-1]);
 
       - name: Checkout shared-pipeline
         uses: actions/checkout@v4
@@ -56,7 +38,7 @@ jobs:
           repository: nicholas-moniz/shared-pipeline    
           token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           path: shared-pipeline
-          ref: ${{ steps.get-shared-ref.outputs.ref }}
+          ref: ${{ steps.get-shared-ref.outputs.library_ref }}
 
       - name: Make all utility scripts executable
         working-directory: shared-pipeline/scripts
