@@ -27,7 +27,6 @@ jobs:
             const runId = context.runId;
             const repo = context.repo;
       
-            // Fetch the run info
             const run = await github.rest.actions.getWorkflowRun({
               owner: repo.owner,
               repo: repo.repo,
@@ -35,6 +34,7 @@ jobs:
             });
       
             const workflows = run.data.referenced_workflows || [];
+            console.log(workflows);
       
             const match = workflows.find(wf =>
               wf.path === "nicholas-moniz/shared-pipeline/.github/workflows/build-nodejs.yaml"
