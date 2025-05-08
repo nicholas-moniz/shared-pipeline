@@ -23,25 +23,23 @@ try {
   }
 
   let build;
-  const buildPath = process.env.BUILD_PATH;
-  if (buildPath && fs.existsSync(buildPath)) {
+  const buildPath = path.join(process.env.GITHUB_WORKSPACE, "build.json");;
+  if (fs.existsSync(buildPath)) {
     build = JSON.parse(fs.readFileSync(buildPath, "utf8"));
     core.info(`Loaded ${buildPath} and applied defaults into build context`);
   } else {
-    core.warning(`No file found at ${buildPath}, build context is unavailable`);
+    core.warning(`${buildPath} was not found, build context is unavailable`);
   }
 
   let octokit;
   if (process.env.NICHOLAS_MONIZ_GITHUB_TOKEN) {
     octokit = github.getOctokit(process.env.NICHOLAS_MONIZ_GITHUB_TOKEN);
-    core.info("Created octokit context with github token from NICHOLAS_MONIZ_GITHUB_TOKEN");
+    core.info("Created octokit context with github token from NICHOLAS_MONIZ_GITHUB_TOKEN environment variable");
   } else {
     core.warning(`Environment variable NICHOLAS_MONIZ_GITHUB_TOKEN was not set, octokit context is unavailable`);
   }
 
-  core.info(process.env.GITHUB_ACTION_PATH);
-  const entrypoint = path.join(process.env.GITHUB_ACTION_PATH, "index.js");
-  core.info(entrypoint);
+  const entrypoint = path.join(__dirname, "index.js");
   if (!fs.existsSync(entrypoint)) {
     throw new Error(`${entrypoint} was not found`);
   }
