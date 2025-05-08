@@ -1,31 +1,42 @@
 const fs = require("fs");
 const path = require("path");
-const core = require("@actions/core");
 const dotenv = require("dotenv");
 
-try {
-  const isPrepareJob = process.env.GITHUB_JOB === "prepare";
+const core = require("@actions/core");
+const github = require("@actions/github");
+const exec = require("@actions/exec");
+const io = require("@actions/io");
+const cache = require("@actions/cache");
+const glob = require("@actions/glob");
+const httpClient = require("@actions/http-client");
+const toolCache = require("@actions/tool-cache");
+const artifact = require("@actions/artifact");
+const attest = require("@actions/attest");
 
+try {
   const runtimeEnvPath = path.join(process.env.GITHUB_WORKSPACE, "runtime.env");
   if (fs.existsSync(runtimeEnvPath)) {
     dotenv.config({ path: runtimeEnvPath });
-    core.info(`Loaded environment variables from ${runtimeEnvPath}`);
-  } else if (isPrepareJob) {
-    core.info(`${runtimeEnvPath} not found in prepare job (allowed)`);
+    core.info(`Loaded environment variables from ${runtimeEnvPath} into env context`);
   } else {
-    throw new Error(`${runtimeEnvPath} was not found`);
+    core.warning(`${runtimeEnvPath} was not found, custom env variables not available in env context`);
   }
 
   let build;
   const buildPath = process.env.BUILD_PATH;
-  const buildPropertiesPath = process.env.BUILD_PROPERTIES_PATH;
-  if (fs.existsSync(buildPath)) {
-    build = JSON.parse(fs.readFileSync(buildPropertiesPath, "utf8"));
-    core.info(`Loaded ${buildPropertiesPath} and applied defaults into ${buildPath}`);
-  } else if (isPrepareJob) {
-    core.info(`${buildPath} not found in prepare job (allowed)`);
+  if (buildPath && fs.existsSync(buildPath)) {
+    build = JSON.parse(fs.readFileSync(buildPath, "utf8"));
+    core.info(`Loaded ${buildPath} and applied defaults into build context`);
   } else {
-    throw new Error(`${buildPath} was not found`);
+    core.warning(`${buildPath} not found, build context is unavailable`);
+  }
+
+  let octokit;
+  if (process.env.NICHOLAS_MONIZ_GITHUB_TOKEN) {
+    octokit = github.getOctokit(process.env.NICHOLAS_MONIZ_GITHUB_TOKEN);
+    core.info("Created octokit context with github token from NICHOLAS_MONIZ_GITHUB_TOKEN");
+  } else {
+    core.warning(`Environment variable NICHOLAS_MONIZ_GITHUB_TOKEN was not set, octokit context is unavailable`);
   }
 
   const entrypoint = path.join(process.env.GITHUB_ACTION_PATH, "index.js");
@@ -33,10 +44,30 @@ try {
     throw new Error(`${entrypoint} was not found`);
   }
 
-  global._entrypointPath = entrypoint;
+  const run = require(entrypoint);
+  if (typeof run !== "function") {
+    throw new Error(`Expected ${entrypoint} to export a function`);
+  }
+
+  const context = {
+    fs,
+    path,
+    core,
+    github,
+    exec,
+    io,
+    cache,
+    glob,
+    httpClient,
+    toolCache,
+    artifact,
+    attest,
+    env: process.env,
+    ...(build ? { build } : {}),
+    ...(octokit ? { octokit } : {}),
+  };
+
+  run(context);
 } catch (err) {
   core.setFailed(`${err.message}`);
-  process.exit(1);
 }
-
-require(global._entrypointPath);
