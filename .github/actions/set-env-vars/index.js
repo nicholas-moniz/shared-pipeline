@@ -10,7 +10,6 @@ try {
     { key: "PATH", value: `${workspace}/tools/bin:${process.env.PATH}` },
     { key: "CALLER_PATH", value: `${workspace}/${process.env.GITHUB_REPOSITORY.split("/").pop()}` },
     { key: "LIBRARY_PATH", value: `${workspace}/shared-pipeline` },
-    { key: "SCRIPTS_PATH", value: `${workspace}/scripts` },
     { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${process.env.BUILD_PROPERTIES_PATH}` },
     { key: "LIBRARY_VERSION", value: process.env.LIBRARY_VERSION },
     { key: "WORKFLOW", value: process.env.WORKFLOW },
