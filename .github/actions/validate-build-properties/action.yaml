@@ -2,4 +2,4 @@ name: Validate Build Properties
 description: Validates build-properties.json against a strict schema
 runs:
   using: node20
-  main: ../../scripts/bootstrap.js
+  main: bootstrap.js
