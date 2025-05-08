@@ -28,7 +28,7 @@ try {
     build = JSON.parse(fs.readFileSync(buildPath, "utf8"));
     core.info(`Loaded ${buildPath} and applied defaults into build context`);
   } else {
-    core.warning(`${buildPath} not found, build context is unavailable`);
+    core.warning(`No file found at ${buildPath}, build context is unavailable`);
   }
 
   let octokit;
