@@ -1,4 +1,4 @@
-module.exports = function ({ env, core, fs, path }) {
+module.exports = async function ({ env, core, fs, path }) {
   try {
     const workspace = env.GITHUB_WORKSPACE;
     const envFile = path.join(workspace, "runtime.env");
