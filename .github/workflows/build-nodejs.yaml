@@ -71,6 +71,9 @@ jobs:
         working-directory: shared-pipeline
         run: npm ci
 
+      - name: Copy boostraps
+        uses: ./shared-pipeline/.github/actions/copy-bootstraps
+        
       - name: Setup tools
         uses: ./shared-pipeline/.github/actions/setup-tools
 
