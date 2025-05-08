@@ -12,7 +12,6 @@ try {
     { key: "LIBRARY_PATH", value: `${workspace}/shared-pipeline` },
     { key: "SCRIPTS_PATH", value: `${workspace}/scripts` },
     { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${process.env.BUILD_PROPERTIES_PATH}` },
-    { key: "BUILD_PATH", value: `${workspace}/build.json` },
     { key: "LIBRARY_VERSION", value: process.env.LIBRARY_VERSION },
     { key: "WORKFLOW", value: process.env.WORKFLOW },
   ];
