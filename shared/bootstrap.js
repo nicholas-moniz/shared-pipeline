@@ -39,7 +39,9 @@ try {
     core.warning(`Environment variable NICHOLAS_MONIZ_GITHUB_TOKEN was not set, octokit context is unavailable`);
   }
 
+  core.info(process.env.GITHUB_ACTION_PATH);
   const entrypoint = path.join(process.env.GITHUB_ACTION_PATH, "index.js");
+  core.info(entrypoint);
   if (!fs.existsSync(entrypoint)) {
     throw new Error(`${entrypoint} was not found`);
   }
