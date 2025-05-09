@@ -1,3 +1,5 @@
+const { z } = require("zod");
+
 const node = z.object({ 
   project: z.object({
     name: z.string(),
