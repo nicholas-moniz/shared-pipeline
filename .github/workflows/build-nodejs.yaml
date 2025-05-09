@@ -25,6 +25,7 @@ jobs:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
             try {
+              core.info(`${context.runAttempt}`);
               const { data: { referenced_workflows: referencedWorkflows } } = await github.rest.actions.listJobsForWorkflowRunAttempt({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
