@@ -11,6 +11,8 @@ module.exports = async function ({ env, core, fs, path }) {
       { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${repoName}/${env.BUILD_PROPERTIES_PATH}` },
       { key: "LIBRARY_VERSION", value: env.LIBRARY_VERSION },
       { key: "WORKFLOW", value: env.WORKFLOW },
+      { key: "TOOLS_DIR", value: `${workspace}/tools/bin` },
+      { key: "HELM_INSTALL_DIR", value: `${workspace}/tools/bin` }
     ];
 
     const secrets = JSON.parse(env.SECRETS || "{}");
