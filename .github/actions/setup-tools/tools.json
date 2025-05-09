@@ -2,22 +2,22 @@
   {
     "name": "kubectl",
     "url": "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl",
-    "method": "binary",
+    "method": "binary"
   },
   {
     "name": "jq",
     "url": "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64",
-    "method": "binary",
+    "method": "binary"
   },
   {
     "name": "yq",
     "url": "https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64",
-    "method": "binary",
+    "method": "binary"
   },
   {
     "name": "helm",
     "url": "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3",
-    "method": "bash",
+    "method": "bash"
   },
   {
     "name": "oci",
