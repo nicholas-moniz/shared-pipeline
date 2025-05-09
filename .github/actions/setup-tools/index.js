@@ -7,8 +7,8 @@ module.exports = async function ({ core, env, exec, fs, path }) {
 
     for (const tool of tools) {
       core.info(`Installing ${tool.name}`);
-      const { name, url, method, bashArgs = "" } = tool;
-      await exec.exec("bash", [installScriptPath, method, name, url, bashArgs]);
+      const { name, url, method, bashArgs = [] } = tool;
+      await exec.exec("bash", [installScriptPath, method, name, url, ...bashArgs]);
     }
   } catch (err) {
     core.error(`Tool installation failed: ${err}`);
