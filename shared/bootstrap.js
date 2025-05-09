@@ -78,7 +78,7 @@ let octokit;
     });
 
     const currentJob = data.jobs.find(job => job.name === process.env.GITHUB_JOB);
-    if (!currentJob) throw new Error(`Job '${jobName}' not found in workflow run`);
+    if (!currentJob) throw new Error(`Job '${process.env.GITHUB_JOB}' not found in workflow run`);
 
     const currentStep = currentJob.steps.find(step => step.status === "in_progress");
     if (!currentStep) throw new Error("No step in progress found");
