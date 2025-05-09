@@ -72,10 +72,11 @@ let octokit;
     await run(context);
   } catch (err) {
     try {
-      const { data } = await octokit.rest.actions.listJobsForWorkflowRun({
+      const { data } = await octokit.rest.actions.listJobsForWorkflowRunAttempt({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        run_id: github.context.runId
+        run_id: github.context.runId,
+        attempt_number: github.context.runAttempt
       });
     
       let stepName = "unknown";
@@ -96,7 +97,7 @@ let octokit;
         }
       }
     
-      core.setFailed(`Step '${stepName}' in job '${jobName}' failed: ${err.message}. See step logs for details.`);
+      core.setFailed(`Step '${stepName}' in job '${jobName}' failed with error: ${err.message}. See step logs for details.`);
     
     } catch (fallbackErr) {
       core.error(`Failed to resolve job/step metadata: ${fallbackErr.message}`);
