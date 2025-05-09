@@ -25,14 +25,13 @@ jobs:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
             try {
-              const run = await github.rest.actions.getWorkflowRun({
+              const { data: { referenced_workflows: referencedWorkflows } } = await octokit.rest.actions.listJobsForWorkflowRunAttempt({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
+                attempt_number: context.runAttempt
               });
-      
-              const referencedWorkflows = run.data.referenced_workflows;
-      
+            
               if (!referencedWorkflows || referencedWorkflows.length === 0) {
                 throw new Error("No referenced workflows found in this run");
               }
@@ -51,8 +50,8 @@ jobs:
               core.setOutput("library_ref", workflowRef);
       
               core.info(`Extracted reusable workflow: ${workflowFile}@${workflowRef}`);
-            } catch (error) {
-              core.setFailed(`Failed to get reusable workflow ref: ${error.message}`);
+            } catch (err) {
+              core.setFailed(`Failed to get reusable workflow ref: ${err.message}`);
             }
 
       - name: Checkout shared-pipeline
