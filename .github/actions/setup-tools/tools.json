@@ -23,6 +23,11 @@
     "name": "oci",
     "url": "https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh",
     "method": "bash",
-    "bashArgs": "--accept-all-defaults --install-dir \"$GITHUB_WORKSPACE/tools/oci-cli\" --exec-dir \"$GITHUB_WORKSPACE/tools/bin\" --no-tty"
+    "bashArgs": [
+      "--accept-all-defaults",
+      "--install-dir", "$GITHUB_WORKSPACE/tools/oci-cli",
+      "--exec-dir", "$GITHUB_WORKSPACE/tools/bin",
+      "--no-tty"
+    ]
   }
 ]
