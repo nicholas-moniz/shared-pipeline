@@ -6,8 +6,8 @@ module.exports = async function ({ env, core, fs, path }) {
     const entries = [
       { key: "PATH", value: `${workspace}/tools/bin:${env.PATH}` },
       { key: "CALLER_PATH", value: `${workspace}/${env.GITHUB_REPOSITORY.split("/").pop()}` },
-      { key: "LIBRARY_PATH", value: `${workspace}/shared-pipeline` },
-      { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${env.BUILD_PROPERTIES_PATH}` },
+      { key: "LIBRARY_PATH", value: `${workspace}/${env.GITHUB_REPOSITORY.split("/").pop()}/shared-pipeline` },
+      { key: "BUILD_PROPERTIES_PATH", value: `${workspace}/${env.GITHUB_REPOSITORY.split("/").pop()}/${env.BUILD_PROPERTIES_PATH}` },
       { key: "LIBRARY_VERSION", value: env.LIBRARY_VERSION },
       { key: "WORKFLOW", value: env.WORKFLOW },
     ];
