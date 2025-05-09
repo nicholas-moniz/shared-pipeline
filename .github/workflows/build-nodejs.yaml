@@ -32,7 +32,7 @@ jobs:
                 attempt_number: process.env.GITHUB_RUN_ATTEMPT
               });
 
-              core.info(JSON.stringfy(data));
+              core.info(JSON.stringify(data));
               if (!referencedWorkflows || referencedWorkflows.length === 0) {
                 throw new Error("No referenced workflows found in this run");
               }
