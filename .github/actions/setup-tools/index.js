@@ -11,9 +11,8 @@ module.exports = async function ({ core, env, exec, fs, path }) {
     const tools = JSON.parse(await fs.readFile(path.join(__dirname, "tools.json"), "utf-8"));
 
     for (const tool of tools) {
-      core.startGroup(`Installing ${tool.name}`);
+      core.info(`Installing ${tool.name}`);
       await installTool(tool);
-      core.endGroup();
     }
   } catch (err) {
     core.error(`Tool installation failed: ${err}`);
