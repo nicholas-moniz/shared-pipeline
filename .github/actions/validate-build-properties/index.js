@@ -7,6 +7,7 @@ module.exports = async function ({ fs, path, core, env }) {
     switch (env.BUILD_TYPE) {
       case "NODE":
         schema = node;
+        console.log(schema);
         break;
       default:
         throw new Error(`Invalid build type ${env.BUILD_TYPE}`);
