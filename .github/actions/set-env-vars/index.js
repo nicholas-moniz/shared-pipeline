@@ -45,7 +45,7 @@ module.exports = async function ({ env, core, fs, path }) {
 
     core.info(`Successfully wrote all environment variables to runtime.env`);
   } catch (err) {
-    core.error(`An error occurred while trying to create runtime.env: ${err.message}`);
+    core.error(`An error occurred while trying to create runtime.env: ${err}`, { logOnly: true });
     throw err;
   }
 };
