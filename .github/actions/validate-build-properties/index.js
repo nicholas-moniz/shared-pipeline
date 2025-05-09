@@ -1,7 +1,7 @@
 const { node } = require("./schemas/index");
 const { ZodError } = require("zod");
 
-module.exports = function ({ fs, path, core, env }) {
+module.exports = async function ({ fs, path, core, env }) {
   try {
     let schema;
     switch(env.BUILD_TYPE) {
@@ -20,9 +20,9 @@ module.exports = function ({ fs, path, core, env }) {
       core.error(`Failed to validate ${env.BUILD_PROPERTIES_PATH} for the following reasons`);
       err.errors.forEach(e => core.error(JSON.stringify(e, null, 2)));
     } else {
-      core.error(`An unexpected error occured while trying to validate ${env.BUILD_PROPERTIES_PATH} for the following reason: ${err.message}`);
+      core.error(`An unexpected error occured while trying to validate ${env.BUILD_PROPERTIES_PATH} for the following reason: ${err}`);
     }
 
-    throw new Error("An error occured while trying to validate build properties");
+    throw err;
   }
 };
