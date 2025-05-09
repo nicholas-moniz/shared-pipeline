@@ -69,6 +69,10 @@ jobs:
         working-directory: shared-pipeline
         run: npm ci
 
+      - name: Copy bootstrap to copy-bootstraps
+        working-directory: shared-pipeline
+        run: cp shared/bootstrap.js .github/actions/copy-bootstraps
+        
       - name: Copy boostraps
         uses: ./shared-pipeline/.github/actions/copy-bootstraps
         
