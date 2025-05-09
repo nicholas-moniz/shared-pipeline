@@ -13,6 +13,8 @@ const toolCache = require("@actions/tool-cache");
 const artifact = require("@actions/artifact");
 const attest = require("@actions/attest");
 
+let octokit;
+
 (async () => {
   try {
     const runtimeEnvPath = path.join(process.env.GITHUB_WORKSPACE, "runtime.env");
@@ -32,7 +34,6 @@ const attest = require("@actions/attest");
       core.warning(`${buildPath} was not found, build context is unavailable`);
     }
   
-    let octokit;
     if (process.env.NICHOLAS_MONIZ_GITHUB_TOKEN) {
       octokit = github.getOctokit(process.env.NICHOLAS_MONIZ_GITHUB_TOKEN);
       core.info("Created octokit context with github token from NICHOLAS_MONIZ_GITHUB_TOKEN environment variable");
