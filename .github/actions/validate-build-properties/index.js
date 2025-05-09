@@ -4,7 +4,7 @@ const { ZodError } = require("zod");
 module.exports = async function ({ fs, path, core, env }) {
   try {
     let schema;
-    switch(env.BUILD_TYPE) {
+    switch (env.BUILD_TYPE) {
       case "NODE":
         schema = node;
         break;
@@ -12,18 +12,34 @@ module.exports = async function ({ fs, path, core, env }) {
         throw new Error(`Invalid build type ${env.BUILD_TYPE}`);
     }
 
-    const parsed = schema.parse(JSON.parse(fs.readFileSync(env.BUILD_PROPERTIES_PATH, "utf-8")));
-    
-    fs.writeFileSync(`${env.GITHUB_WORKSPACE}/build.json`, JSON.stringify(parsed, null, 2));
-    core.info(`${process.env.BUILD_PROPERTIES_PATH} has been validated and parsed at ${env.GITHUB_WORKSPACE}/build.json`);
-  } catch (err) {
-    if (err instanceof ZodError) {
-      core.error(`Failed to validate ${env.BUILD_PROPERTIES_PATH} for the following reasons`);
-      err.errors.forEach(e => core.error(JSON.stringify(e, null, 2)));
-    } else {
-      core.error(`An unexpected error occured while trying to validate ${env.BUILD_PROPERTIES_PATH} for the following reason: ${err}`);
+    const buildPath = env.BUILD_PROPERTIES_PATH;
+    const workspacePath = env.GITHUB_WORKSPACE;
+    const outputPath = path.join(workspacePath, "build.json");
+
+    let rawJson;
+    try {
+      rawJson = await fs.readFile(buildPath, "utf-8");
+    } catch (readErr) {
+      throw new Error(`Failed to read build properties from ${buildPath}: ${readErr.message}`);
     }
 
+    let parsed;
+    try {
+      parsed = schema.parse(JSON.parse(rawJson));
+    } catch (validationErr) {
+      if (validationErr instanceof ZodError) {
+        core.error(`Failed to validate ${buildPath} due to the following issues:`);
+        validationErr.errors.forEach(e => core.error(JSON.stringify(e, null, 2)));
+        throw validationErr;
+      } else {
+        throw new Error(`Invalid JSON in ${buildPath}: ${validationErr.message}`);
+      }
+    }
+
+    await fs.writeFile(outputPath, JSON.stringify(parsed, null, 2), "utf-8");
+    core.info(`${buildPath} has been validated and parsed at ${outputPath}`);
+  } catch (err) {
+    core.error(`An error occurred while validating ${env.BUILD_PROPERTIES_PATH}: ${err.message}`);
     throw err;
   }
 };
