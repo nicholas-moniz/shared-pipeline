@@ -28,8 +28,9 @@ module.exports = async function ({ fs, path, core, env }) {
       parsed = schema.parse(JSON.parse(rawJson));
     } catch (validationErr) {
       if (validationErr instanceof ZodError) {
-        core.error(`Failed to validate ${buildPath} due to the following issues:`);
-        validationErr.errors.forEach(e => core.error(JSON.stringify(e, null, 2)));
+        core.error(`Failed to validate ${buildPath} due to the following issues:`, { logOnly: true });
+        validationErr.errors.forEach(e => core.error(JSON.stringify(e, null, 2), { logOnly: true }));
+        validationErr.message = `${buildPath} does match defined schema`;
         throw validationErr;
       } else {
         throw new Error(`Invalid JSON in ${buildPath}: ${validationErr.message}`);
@@ -39,7 +40,7 @@ module.exports = async function ({ fs, path, core, env }) {
     await fs.writeFile(outputPath, JSON.stringify(parsed, null, 2), "utf-8");
     core.info(`${buildPath} has been validated and parsed at ${outputPath}`);
   } catch (err) {
-    core.error(`An error occurred while validating ${env.BUILD_PROPERTIES_PATH}: ${err.message}`);
+    core.error(`An error occurred while validating ${env.BUILD_PROPERTIES_PATH}: ${err}`, { logOnly: true });
     throw err;
   }
 };
