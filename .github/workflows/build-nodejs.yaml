@@ -75,9 +75,6 @@ jobs:
         
       - name: Copy boostraps
         uses: ./shared-pipeline/.github/actions/copy-bootstraps
-        
-      - name: Setup tools
-        uses: ./shared-pipeline/.github/actions/setup-tools
 
       - name: Set environment variables
         uses: ./shared-pipeline/.github/actions/set-env-vars
@@ -86,6 +83,9 @@ jobs:
           LIBRARY_VERSION: ${{ steps.get-shared-ref.outputs.library_ref }}
           WORKFLOW: ${{ steps.get-shared-ref.outputs.workflow }}
           SECRETS: ${{ toJson(secrets) }}
+          
+      - name: Setup tools
+        uses: ./shared-pipeline/.github/actions/setup-tools
 
       - name: Validate build properties
         uses: ./shared-pipeline/.github/actions/validate-build-properties
