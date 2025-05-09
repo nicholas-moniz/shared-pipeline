@@ -14,7 +14,7 @@ if [[ "$METHOD" == "binary" ]]; then
   chmod +x "$DEST"
 
 elif [[ "$METHOD" == "bash" ]]; then
-  curl -s "$URL" | bash -s -- $BASH_ARGS
+  curl -sL "$URL" | bash -s -- $BASH_ARGS
 
 else
   echo "Unknown install method: $METHOD"
