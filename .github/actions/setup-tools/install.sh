@@ -2,13 +2,22 @@
 
 set -euo pipefail
 
-NAME="$1"
-URL="$2"
-DEST_DIR="$3"
+METHOD="$1"       
+NAME="$2"        
+URL="$3"
+BASH_ARGS="${4:-}"
 
-DEST="$DEST_DIR/$NAME"
+if [[ "$METHOD" == "binary" ]]; then
+  DEST="$TOOLS_DIR/$NAME"
+  curl -L -o "$DEST" "$URL"
+  chmod +x "$DEST"
 
-curl -L -o "$DEST" "$URL"
-chmod +x "$DEST"
+elif [[ "$METHOD" == "bash" ]]; then
+  curl -s "$URL" | bash -s -- $BASH_ARGS
 
-echo "Installed $NAME to $DEST"
+else
+  echo "Unknown install method: $METHOD"
+  exit 1
+fi
+
+echo "Installed $NAME to $TOOLS_DIR"
