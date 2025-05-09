@@ -2,4 +2,4 @@ name: Copy Bootstraps
 description: Copies the appropriate boostrap files in shared to each action
 runs:
   using: node20
-  main: index.js
+  main: bootstrap.js
