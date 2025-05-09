@@ -25,7 +25,7 @@ jobs:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
             try {
-              const { data: { referenced_workflows: referencedWorkflows } } = await octokit.rest.actions.listJobsForWorkflowRunAttempt({
+              const { data: { referenced_workflows: referencedWorkflows } } = await github.rest.actions.listJobsForWorkflowRunAttempt({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
