@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const dotenv = require("dotenv");
 
@@ -18,39 +18,44 @@ let octokit;
 (async () => {
   try {
     const runtimeEnvPath = path.join(process.env.GITHUB_WORKSPACE, "runtime.env");
-    if (fs.existsSync(runtimeEnvPath)) {
+    try {
+      await fs.access(runtimeEnvPath);
       dotenv.config({ path: runtimeEnvPath });
       core.info(`Loaded environment variables from ${runtimeEnvPath} into env context`);
-    } else {
+    } catch {
       core.warning(`${runtimeEnvPath} was not found, custom env variables not available in env context`);
     }
-  
+
     let build;
-    const buildPath = path.join(process.env.GITHUB_WORKSPACE, "build.json");;
-    if (fs.existsSync(buildPath)) {
-      build = JSON.parse(fs.readFileSync(buildPath, "utf8"));
+    const buildPath = path.join(process.env.GITHUB_WORKSPACE, "build.json");
+    try {
+      await fs.access(buildPath);
+      const buildData = await fs.readFile(buildPath, "utf8");
+      build = JSON.parse(buildData);
       core.info(`Loaded ${buildPath} and applied defaults into build context`);
-    } else {
+    } catch {
       core.warning(`${buildPath} was not found, build context is unavailable`);
     }
-  
+
     if (process.env.NICHOLAS_MONIZ_GITHUB_TOKEN) {
       octokit = github.getOctokit(process.env.NICHOLAS_MONIZ_GITHUB_TOKEN);
       core.info("Created octokit context with github token from NICHOLAS_MONIZ_GITHUB_TOKEN environment variable");
     } else {
       core.warning(`Environment variable NICHOLAS_MONIZ_GITHUB_TOKEN was not set, octokit context is unavailable`);
     }
-  
+
     const entrypoint = path.join(__dirname, "index.js");
-    if (!fs.existsSync(entrypoint)) {
+    try {
+      await fs.access(entrypoint);
+    } catch {
       throw new Error(`${entrypoint} was not found`);
     }
-  
+
     const run = require(entrypoint);
     if (typeof run !== "function") {
       throw new Error(`Expected ${entrypoint} to export a function`);
     }
-  
+
     const context = {
       fs,
       path,
@@ -68,7 +73,7 @@ let octokit;
       ...(build ? { build } : {}),
       ...(octokit ? { octokit } : {}),
     };
-  
+
     await run(context);
   } catch (err) {
     try {
@@ -76,32 +81,28 @@ let octokit;
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         run_id: github.context.runId,
-        attempt_number: github.context.runAttempt
+        attempt_number: process.env.GITHUB_RUN_ATTEMPT,
       });
-    
-      let stepName = "unknown";
-      let jobName = process.env.GITHUB_JOB || "unknown";
 
-      core.info(process.env.GITHUB_JOB);
-      core.info(JSON.stringify(data.jobs[0].name));
+      let stepName;
+      let jobName = process.env.GITHUB_JOB;
 
       const currentJob = data.jobs.find(job => job.name.includes(jobName));
       if (!currentJob) {
-        core.warning(`Could not find job '${jobName}' in workflow run — falling back to generic job name.`);
+        throw new Error(`Could not find job '${jobName}' in current workflow run`);
       } else {
         const currentStep = currentJob.steps.find(step => step.status === "in_progress");
         if (!currentStep) {
-          core.warning(`Could not determine current step in job '${jobName}' — no 'in_progress' step found.`);
+          throw new Error(`Could not determine current step in job '${jobName}' — no 'in_progress' step found.`);
         } else {
           stepName = currentStep.name;
         }
       }
-    
+
       core.setFailed(`Step '${stepName}' in job '${jobName}' failed with error: ${err.message}. See step logs for details.`);
-    
     } catch (fallbackErr) {
       core.error(`Failed to resolve job/step metadata: ${fallbackErr.message}`);
-      core.setFailed(`Action failed: ${err.message}. (Step name unavailable)`);
+      core.setFailed(`Action failed: ${err.message}.`);
     }
   }
 })();
