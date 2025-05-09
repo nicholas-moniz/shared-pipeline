@@ -1,22 +1,17 @@
-const core = require("@actions/core");
-const exec = require("@actions/exec");
-const fs = require("fs");
-const path = require("path");
-
-(async () => {
+module.exports = async function({ core, env, exec, fs, path }) {
   try {
-    const workspace = process.env.GITHUB_WORKSPACE;
+    const workspace = env.GITHUB_WORKSPACE;
     const actionsDir = path.join(workspace, "shared-pipeline/.github/actions");
     const bootstrapJs = path.join(workspace, "shared-pipeline/shared/bootstrap.js");
-    const bootstrapSh = path.join(workspace, "shared-pipeline/scripts/bootstrap.sh");
+    const bootstrapSh = path.join(workspace, "shared-pipeline/shared/bootstrap.sh");
 
-    const entries = fs.readdirSync(actionsDir, { withFileTypes: true })
+    const entries = await fs.readdir(actionsDir, { withFileTypes: true });
+    const actionDirs = entries
       .filter(dirent => dirent.isDirectory())
       .map(dirent => path.join(actionsDir, dirent.name));
 
-    for (const actionPath of entries) {
-      const files = fs.readdirSync(actionPath);
-
+    for (const actionPath of actionDirs) {
+      const files = await fs.readdir(actionPath);
       const hasJs = files.some(file => file.endsWith(".js"));
       const hasSh = files.some(file => file.endsWith(".sh"));
 
@@ -29,10 +24,11 @@ const path = require("path");
         await exec.exec("cp", [bootstrapSh, dest]);
         core.info(`Copied bootstrap.sh to ${dest}`);
       } else {
-        core.info(`No matching .js or .sh file in ${actionPath}, skipping.`);
+        core.info(`ℹNo matching .js or .sh file in ${actionPath}, skipping.`);
       }
     }
   } catch (err) {
-    core.setFailed(`Error during bootstrap propagation: ${err.message}`);
+    core.error(`Error during bootstrap propagation: ${err}`, { logOnly: true });
+    throw err;
   }
-})();
+};
