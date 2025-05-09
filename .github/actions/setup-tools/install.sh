@@ -9,7 +9,8 @@ BASH_ARGS="${4:-}"
 
 if [[ "$METHOD" == "binary" ]]; then
   DEST="$TOOLS_DIR/$NAME"
-  curl -L -o "$DEST" "$URL"
+  EVAL_URL=$(eval echo "$URL")
+  curl -L -o "$DEST" "$EVAL_URL"
   chmod +x "$DEST"
 
 elif [[ "$METHOD" == "bash" ]]; then
