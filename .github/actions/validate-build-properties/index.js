@@ -11,10 +11,11 @@ module.exports = async function ({ fs, path, core, env }) {
       default:
         throw new Error(`Invalid build type ${env.BUILD_TYPE}`);
     }
+
+    const parsed = schema.parse(JSON.parse(fs.readFileSync(env.BUILD_PROPERTIES_PATH, "utf-8")));
     
-    const parsed = schema.parse(JSON.parse(env.BUILD_PROPERTIES_PATH));
-    fs.writeFileSync(process.env.BUILD_PATH, JSON.stringify(parsed, null, 2));
-    core.info(`${process.env.BUILD_PROPERTIES_PATH} has been validated and parsed at ${env.BUILD_PATH}`);
+    fs.writeFileSync(`${env.GITHUB_WORKSPACE}/build.json`, JSON.stringify(parsed, null, 2));
+    core.info(`${process.env.BUILD_PROPERTIES_PATH} has been validated and parsed at ${env.GITHUB_WORKSPACE}/build.json`);
   } catch (err) {
     if (err instanceof ZodError) {
       core.error(`Failed to validate ${env.BUILD_PROPERTIES_PATH} for the following reasons`);
