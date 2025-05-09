@@ -25,14 +25,14 @@ jobs:
           github-token: ${{ secrets.NICHOLAS_MONIZ_GITHUB_TOKEN }}
           script: |
             try {
-              core.info(`${process.env.GITHUB_RUN_ATTEMPT}`);
-              const { data: { referenced_workflows: referencedWorkflows } } = await github.rest.actions.listJobsForWorkflowRunAttempt({
+              const { data } = await github.rest.actions.listJobsForWorkflowRunAttempt({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: context.runId,
                 attempt_number: process.env.GITHUB_RUN_ATTEMPT
               });
-            
+
+              core.info(JSON.stringfy(data));
               if (!referencedWorkflows || referencedWorkflows.length === 0) {
                 throw new Error("No referenced workflows found in this run");
               }
