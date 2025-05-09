@@ -78,9 +78,10 @@ let octokit;
         run_id: github.context.runId
       });
     
-      let stepName = "unknown step";
-      let jobName = process.env.GITHUB_JOB || "unknown job";
-    
+      let stepName = "unknown";
+      let jobName = process.env.GITHUB_JOB || "unknown";
+      
+      core.info(data.jobs);
       const currentJob = data.jobs.find(job => job.name === jobName);
       if (!currentJob) {
         core.warning(`Could not find job '${jobName}' in workflow run — falling back to generic job name.`);
