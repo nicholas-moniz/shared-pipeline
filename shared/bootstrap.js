@@ -71,18 +71,33 @@ let octokit;
   
     await run(context);
   } catch (err) {
-    const { data } = await octokit.rest.actions.listJobsForWorkflowRun({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      run_id: github.context.runId
-    });
-
-    const currentJob = data.jobs.find(job => job.name === process.env.GITHUB_JOB);
-    if (!currentJob) throw new Error(`Job '${process.env.GITHUB_JOB}' not found in workflow run`);
-
-    const currentStep = currentJob.steps.find(step => step.status === "in_progress");
-    if (!currentStep) throw new Error("No step in progress found");
-        
-    core.setFailed(`Step ${step}' in job '${job}' failed with error: ${err.message}. See step logs for details.`);
+    try {
+      const { data } = await octokit.rest.actions.listJobsForWorkflowRun({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        run_id: github.context.runId
+      });
+    
+      let stepName = "unknown step";
+      let jobName = process.env.GITHUB_JOB || "unknown job";
+    
+      const currentJob = data.jobs.find(job => job.name === jobName);
+      if (!currentJob) {
+        core.warning(`Could not find job '${jobName}' in workflow run — falling back to generic job name.`);
+      } else {
+        const currentStep = currentJob.steps.find(step => step.status === "in_progress");
+        if (!currentStep) {
+          core.warning(`Could not determine current step in job '${jobName}' — no 'in_progress' step found.`);
+        } else {
+          stepName = currentStep.name;
+        }
+      }
+    
+      core.setFailed(`Step '${stepName}' in job '${jobName}' failed: ${err.message}. See step logs for details.`);
+    
+    } catch (fallbackErr) {
+      core.error(`Failed to resolve job/step metadata: ${fallbackErr.message}`);
+      core.setFailed(`Action failed: ${err.message}. (Step name unavailable)`);
+    }
   }
 })();
