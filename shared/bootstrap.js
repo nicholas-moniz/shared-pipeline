@@ -80,10 +80,9 @@ let octokit;
     
       let stepName = "unknown";
       let jobName = process.env.GITHUB_JOB || "unknown";
-      
-      core.info(data);
-      core.info(data.jobs);
-      core.info(data.jobs[0]);
+
+      core.info(process.env.GITHUB_JOB);
+      core.info(JSON.stringify(data.jobs[0].name));
 
       const currentJob = data.jobs.find(job => job.name === jobName);
       if (!currentJob) {
