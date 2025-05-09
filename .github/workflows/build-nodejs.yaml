@@ -96,9 +96,49 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
           
-  next-job:
+  test:
     runs-on: ubuntu-latest
     needs: prepare
+    steps:
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
+  
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ runner.os }}-workspace-${{ github.run_id }}-${{ github.run_attempt }}
+
+  end:
+    runs-on: ubuntu-latest
+    needs: deploy
     steps:
       - name: Restore cache
         uses: actions/cache/restore@v4
