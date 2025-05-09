@@ -1,3 +1,3 @@
-const node = require("./node");
+const { node } = require("./node");
 
 module.exports = { node };
