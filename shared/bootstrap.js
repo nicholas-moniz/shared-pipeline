@@ -84,7 +84,7 @@ let octokit;
       core.info(process.env.GITHUB_JOB);
       core.info(JSON.stringify(data.jobs[0].name));
 
-      const currentJob = data.jobs.find(job => job.name === jobName);
+      const currentJob = data.jobs.find(job => job.name.includes(jobName));
       if (!currentJob) {
         core.warning(`Could not find job '${jobName}' in workflow run — falling back to generic job name.`);
       } else {
